@@ -2,13 +2,15 @@ package hufs.ces.grimpanz;
 
 import java.util.ArrayList;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
-public class GrimPanModel {
+public class GrimPanModel  implements Observable{
 
 	private volatile static GrimPanModel uniqueModelInstance;
 	
@@ -26,6 +28,10 @@ public class GrimPanModel {
 	
 	public ObservableList<Shape> shapeList = null;
 	public Shape curDrawShape = null;
+	
+	
+	private ArrayList<InvalidationListener> listenerList = null;
+
 	
 	public static GrimPanModel getInstance() {
 		if (uniqueModelInstance == null) {
@@ -113,6 +119,17 @@ public class GrimPanModel {
 
 	public void setPrevMousePosition(Point2D prevMousePosition) {
 		this.prevMousePosition = prevMousePosition;
+	}
+	
+	@Override
+	public void addListener(InvalidationListener li) {
+		this.listenerList.add(li);
+		
+	}
+	@Override
+	public void removeListener(InvalidationListener li) {
+		this.listenerList.remove(li);
+		
 	}
 		
 }

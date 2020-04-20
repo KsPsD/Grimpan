@@ -1,16 +1,24 @@
 package hufs.ces.grimpanz;
 
-import java.io.IOException;
+import java.io.IOException; 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import javax.swing.JColorChooser;
 
+import com.sun.javafx.scene.control.behavior.TextBinding;
+
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableDoubleValue;
+import javafx.beans.value.ObservableIntegerValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,8 +51,10 @@ public class GrimPanFXController extends AnchorPane {
 	private GrimPanModel model;
 	private ShapeFactory sf;
 	
-	DoubleProperty widthProp = new SimpleDoubleProperty();
-	DoubleProperty heightProp = new SimpleDoubleProperty();
+	IntegerProperty widthProp = new SimpleIntegerProperty();
+	IntegerProperty heightProp = new SimpleIntegerProperty();
+	
+
 	
 	ColorPicker fcolorPicker = new ColorPicker(Color.WHITE);
 	ColorPicker scolorPicker = new ColorPicker(Color.BLACK);
@@ -84,28 +94,38 @@ public class GrimPanFXController extends AnchorPane {
 		
 		widthProp.bind(drawPane.widthProperty());
 		widthProp.addListener((obs, oldVal, newVal) -> {
-			double val = ((ObservableDoubleValue)obs).get();
-			System.out.format("drawPane w=%s newVal=%s \n", val, newVal);
+			int val = ((ObservableIntegerValue)obs).get();
+			lblWinSize1.setText("WindowSize:"+val);
+
 		});
+		
 		heightProp.bind(drawPane.heightProperty());
 		heightProp.addListener((obs, oldVal, newVal) -> {
-			double val = ((ObservableDoubleValue)obs).get();
-			System.out.format("drawPane h=%s newVal=%s \n", val, newVal);
+			int val = ((ObservableIntegerValue)obs).get();
+			System.out.format("drawPane h=%d newVal=%d \n", val, newVal);
+			lblWinSize2.setText("x"+val);
 		});
+		
+		
 		
 		model.shapeList.addListener((ListChangeListener<Shape>) c-> {
 	        while (c.next()) {
 	            if (c.wasAdded()) {
 	            	System.out.println("Shape Count ="+model.shapeList.size());
+	            	lblShapeCount.setText("ShapeCount : "+model.shapeList.size());
 	            }
 	            if (c.wasRemoved()) {
 	            	System.out.println("Shape Count ="+model.shapeList.size());
+	            	lblShapeCount.setText("ShapeCount : "+model.shapeList.size());
 	            }
 	        }
 		});
 		
 		initDrawPane();
 	}
+	
+	
+	
 	void initDrawPane() {
 		model.shapeList.clear();
 		model.curDrawShape = null;
@@ -114,6 +134,8 @@ public class GrimPanFXController extends AnchorPane {
 		System.out.format("drawPane w=%s h=%s\n", drawPane.getWidth(), drawPane.getHeight());
 		System.out.format("drawPane Property w=%s h=%s\n", widthProp.get(), heightProp.get());
 	}
+	
+	
 	
 	void clearDrawPane() {
 		drawPane.getChildren().clear();
@@ -174,7 +196,10 @@ public class GrimPanFXController extends AnchorPane {
 
     
     @FXML
-    private Label lblWinSize;
+    private Label lblWinSize1;
+
+    @FXML
+    private Label lblWinSize2;
 
     @FXML
     private Label lblEditState;
