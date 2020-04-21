@@ -59,7 +59,7 @@
          <children>
             <Label fx:id="lblWinSize1" prefHeight="15.0" prefWidth="100.0" text="WindowSize" />
             <Label fx:id="lblWinSize2" prefHeight="15.0" prefWidth="40.0" />
-            <Label fx:id="lblEditState" prefHeight="15.0" prefWidth="140.0" text="Edit State" />
+            <Label fx:id="lblEditState" prefHeight="15.0" prefWidth="140.0" text="Edit State:Pencil" />
             <Label fx:id="lblShapeCount" prefHeight="15.0" prefWidth="140.0" text="Shape Count" />
          </children></HBox>
    </children>

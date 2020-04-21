@@ -102,7 +102,7 @@ public class GrimPanFXController extends AnchorPane {
 		heightProp.bind(drawPane.heightProperty());
 		heightProp.addListener((obs, oldVal, newVal) -> {
 			int val = ((ObservableIntegerValue)obs).get();
-			System.out.format("drawPane h=%d newVal=%d \n", val, newVal);
+			System.out.format("drawPane h=%d newVal=%d \n", oldVal, newVal);
 			lblWinSize2.setText("x"+val);
 		});
 		
@@ -254,6 +254,7 @@ public class GrimPanFXController extends AnchorPane {
     @FXML
     void handleMenuLine(ActionEvent event) {
 		model.setEditState(Utils.SHAPE_LINE);
+		lblEditState.setText("Edit State: Line");
 		redrawDrawPane();
     }
 
@@ -270,6 +271,7 @@ public class GrimPanFXController extends AnchorPane {
     @FXML
     void handleMenuPencil(ActionEvent event) {
 		model.setEditState(Utils.SHAPE_PENCIL);
+		lblEditState.setText("Edit State: Pencil");
 		redrawDrawPane();
     }
 
