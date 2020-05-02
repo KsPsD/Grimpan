@@ -217,11 +217,9 @@ public class GrimPanFXController extends AnchorPane {
 
     @FXML
     void handleMenuDelete(ActionEvent event) {
-
-    	
     	changeEditState(Utils.EDIT_DELETE);
-
-    	
+    	lblEditState.setText("Edit State: delete");
+    	drawPane.redraw();
     }
 
     @FXML
@@ -243,6 +241,7 @@ public class GrimPanFXController extends AnchorPane {
     @FXML
 	void handleMenuUndo(ActionEvent event) {
 		changeEditState(Utils.EDIT_UNDO);
+		
 		model.undoAction();
 		drawPane.redraw();
 	}
@@ -254,6 +253,7 @@ public class GrimPanFXController extends AnchorPane {
 			model.shapeList.add(model.curDrawShape);
 			model.curDrawShape = null;
 		}
+		lblEditState.setText("Edit State: Move");
 		drawPane.redraw();
     }
 

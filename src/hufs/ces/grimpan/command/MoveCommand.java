@@ -5,7 +5,7 @@
  */
 package hufs.ces.grimpan.command;
 
-import hufs.ces.grimpan.core.GrimPanModel;
+import hufs.ces.grimpan.core.GrimPanModel; 
 import hufs.ces.grimpan.core.ShapeFactory;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;

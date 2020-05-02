@@ -1,6 +1,6 @@
 package hufs.ces.grimpan.core;
 
-import java.util.ArrayList;
+import java.util.ArrayList; 
 import java.util.Stack;
 
 import javafx.collections.FXCollections;
@@ -11,6 +11,7 @@ import javafx.scene.shape.Shape;
 
 import hufs.ces.grimpan.command.AddCommand;
 import hufs.ces.grimpan.command.Command;
+import hufs.ces.grimpan.command.DelCommand;
 import hufs.ces.grimpan.command.MoveCommand;
 import hufs.ces.grimpan.sb.DeleteShapeBuilder;
 import hufs.ces.grimpan.sb.LineShapeBuilder;
@@ -48,7 +49,7 @@ public class GrimPanModel {
 	
 	private int selectedShapeIndex = -1; // 이게 선택된거
 	private Point2D movedPos = null;
-
+	private Point2D deletedPos= null;
 	public Stack<Command> undoCommandStack = null;  // command 패턴에서 이게 제일 중요
 	
 	
@@ -179,12 +180,20 @@ public class GrimPanModel {
 	}
 
 		
-	public void addShapeAction() {/////밑으로 3개다 액션들  모델에 왜 들어갔지? 
+	public void addShapeAction() {/////
 		Command addCommand = new AddCommand(this, this.curDrawShape);
 		this.undoCommandStack.push(addCommand);// save for undo
 		addCommand.execute();
 
 	}
+	
+	public void DeleteShapeAction() {
+		Command DelCommand = new DelCommand(this, this.getDeletedPos());
+		this.undoCommandStack.push(DelCommand);// save for undo
+		DelCommand.execute();
+
+	}
+
 
 	public void moveShapeAction() {
 		Command moveCommand = new MoveCommand(this, this.getMovedPos());
@@ -205,4 +214,15 @@ public class GrimPanModel {
 	public void setMovedPos(Point2D movedPos) {
 		this.movedPos = movedPos;
 	}
+	
+	
+	public Point2D getDeletedPos() {
+		return deletedPos;
+	}
+	public void setDeletedPos(Point2D deletedPos) {
+		this.deletedPos = deletedPos;
+	}
 }
+
+
+
