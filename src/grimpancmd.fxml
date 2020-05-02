@@ -9,8 +9,8 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 
 <fx:root fx:id="root" prefHeight="600.0" prefWidth="800.0" type="AnchorPane" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -36,6 +36,7 @@
 					<items>
 						<MenuItem fx:id="menuMove" mnemonicParsing="false" onAction="#handleMenuMove" text="Move" />
 						<MenuItem fx:id="menuDelete" mnemonicParsing="false" onAction="#handleMenuDelete" text="Delete" />
+                  		<MenuItem fx:id="menuUndo" mnemonicParsing="false" onAction="#handleMenuUndo" text="Undo" />
 					</items>
 				</Menu>
 				<Menu mnemonicParsing="false" text="Setting">
@@ -54,13 +55,13 @@
 				</Menu>
 			</menus>
       </MenuBar>
-      <Pane fx:id="drawPane" onMouseDragged="#handleMouseDragged" onMouseEntered="#handleMouseEntered" onMouseExited="#handleMouseExited" onMousePressed="#handleMousePressed" onMouseReleased="#handleMouseReleased" AnchorPane.bottomAnchor="26.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0" />
+      <BorderPane fx:id="drawFramePane" AnchorPane.bottomAnchor="26.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0" />
       <HBox layoutX="334.0" layoutY="486.0" prefHeight="25.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <Label fx:id="lblWinSize1" prefHeight="15.0" prefWidth="100.0" text="WindowSize" />
+            <Label fx:id="lblWinSize1" prefWidth="100.0" text="Window Size" />
             <Label fx:id="lblWinSize2" prefHeight="15.0" prefWidth="40.0" />
-            <Label fx:id="lblEditState" prefHeight="15.0" prefWidth="140.0" text="Edit State:Pencil" />
-            <Label fx:id="lblShapeCount" prefHeight="15.0" prefWidth="140.0" text="Shape Count" />
+            <Label fx:id="lblEditState" prefHeight="15.0" prefWidth="109.0" text="Edit State: Pencil" />
+            <Label fx:id="lblShapeCount" prefHeight="15.0" prefWidth="101.0" text="Shape Count" />
          </children></HBox>
    </children>
 </fx:root>

@@ -1,11 +1,11 @@
-package hufs.ces.grimpanz;
+package hufs.ces.grimpan.core;
 	
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 
-public class GrimPanZFXMLMain extends Application {
+public class GrimPanZCmdFXMLMain extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("GrimPan");

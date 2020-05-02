@@ -1,18 +1,13 @@
-package hufs.ces.grimpanz;
+package hufs.ces.grimpan.core;
 
-import java.io.IOException; 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import javax.swing.JColorChooser;
 
-import com.sun.javafx.scene.control.behavior.TextBinding;
-
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -37,8 +32,10 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
@@ -47,14 +44,13 @@ import javafx.stage.Stage;
 
 public class GrimPanFXController extends AnchorPane {
 
+	private DrawPane drawPane;
+	
 	public Stage parentStage;
 	private GrimPanModel model;
-	private ShapeFactory sf;
 	
 	IntegerProperty widthProp = new SimpleIntegerProperty();
 	IntegerProperty heightProp = new SimpleIntegerProperty();
-	
-
 	
 	ColorPicker fcolorPicker = new ColorPicker(Color.WHITE);
 	ColorPicker scolorPicker = new ColorPicker(Color.BLACK);
@@ -62,9 +58,8 @@ public class GrimPanFXController extends AnchorPane {
 	public GrimPanFXController() {
 
 		model = GrimPanModel.getInstance();
-		sf = new ShapeFactory(model);
 
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("grimpan0.fxml"));
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/grimpancmd.fxml"));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 
@@ -92,70 +87,53 @@ public class GrimPanFXController extends AnchorPane {
 		scolorLabel.setStyle("-fx-padding: 0 0 0 15;");
 		menuStrokeColor.setGraphic(scolorLabel);
 		
+		drawPane = new DrawPane();
+		drawPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+		drawPane.setOnMousePressed(e->handleMousePressed(e));
+		drawPane.setOnMouseReleased(e->handleMouseReleased(e));
+		drawPane.setOnMouseDragged(e->handleMouseDragged(e));
+		drawFramePane.setCenter(drawPane);
+
 		widthProp.bind(drawPane.widthProperty());
 		widthProp.addListener((obs, oldVal, newVal) -> {
 			int val = ((ObservableIntegerValue)obs).get();
+			System.out.format("drawPane w=%s newVal=%s \n", val, newVal);
 			lblWinSize1.setText("WindowSize:"+val);
-
 		});
-		
 		heightProp.bind(drawPane.heightProperty());
 		heightProp.addListener((obs, oldVal, newVal) -> {
 			int val = ((ObservableIntegerValue)obs).get();
-			System.out.format("drawPane h=%d newVal=%d \n", oldVal, newVal);
+			System.out.format("drawPane h=%s newVal=%s \n", val, newVal);
 			lblWinSize2.setText("x"+val);
 		});
-		
-		
 		
 		model.shapeList.addListener((ListChangeListener<Shape>) c-> {
 	        while (c.next()) {
 	            if (c.wasAdded()) {
 	            	System.out.println("Shape Count ="+model.shapeList.size());
-	            	lblShapeCount.setText("ShapeCount : "+model.shapeList.size());
+	            	lblShapeCount.setText("Shape Count : "+model.shapeList.size());
 	            }
 	            if (c.wasRemoved()) {
 	            	System.out.println("Shape Count ="+model.shapeList.size());
-	            	lblShapeCount.setText("ShapeCount : "+model.shapeList.size());
+	            	lblShapeCount.setText("Shape Count : "+model.shapeList.size());
+
 	            }
 	        }
 		});
 		
 		initDrawPane();
 	}
-	
-	
-	
-	void initDrawPane() {
+	void initDrawPane() {		
 		model.shapeList.clear();
 		model.curDrawShape = null;
-		clearDrawPane();
-		
-		System.out.format("drawPane w=%s h=%s\n", drawPane.getWidth(), drawPane.getHeight());
-		System.out.format("drawPane Property w=%s h=%s\n", widthProp.get(), heightProp.get());
+		drawPane.redraw();
 	}
 	
-	
-	
-	void clearDrawPane() {
-		drawPane.getChildren().clear();
-	}
-	void redrawDrawPane() {
-		clearDrawPane();
-		//System.out.println("Shape Count="+model.shapeList.size());
-		for (Shape sh:model.shapeList){
-			drawPane.getChildren().add(sh);
-		}
-		if (model.curDrawShape!=null) {
-			drawPane.getChildren().add(model.curDrawShape);
-		}
-	}
-
     @FXML
     private AnchorPane root;
 
     @FXML
-    private Pane drawPane;
+    private BorderPane drawFramePane;
 
 	
     @FXML
@@ -240,6 +218,10 @@ public class GrimPanFXController extends AnchorPane {
     @FXML
     void handleMenuDelete(ActionEvent event) {
 
+    	
+    	changeEditState(Utils.EDIT_DELETE);
+
+    	
     }
 
     @FXML
@@ -253,14 +235,26 @@ public class GrimPanFXController extends AnchorPane {
 
     @FXML
     void handleMenuLine(ActionEvent event) {
-		model.setEditState(Utils.SHAPE_LINE);
-		lblEditState.setText("Edit State: Line");
-		redrawDrawPane();
+		changeEditState(Utils.SHAPE_LINE);
+    	lblEditState.setText("Edit State: Line");
+		drawPane.redraw();
     }
 
     @FXML
-    void handleMenuMove(ActionEvent event) {
+	void handleMenuUndo(ActionEvent event) {
+		changeEditState(Utils.EDIT_UNDO);
+		model.undoAction();
+		drawPane.redraw();
+	}
 
+    @FXML
+    void handleMenuMove(ActionEvent event) {
+		changeEditState(Utils.EDIT_MOVE);
+		if (model.curDrawShape != null){
+			model.shapeList.add(model.curDrawShape);
+			model.curDrawShape = null;
+		}
+		drawPane.redraw();
     }
 
     @FXML
@@ -270,9 +264,9 @@ public class GrimPanFXController extends AnchorPane {
 
     @FXML
     void handleMenuPencil(ActionEvent event) {
-		model.setEditState(Utils.SHAPE_PENCIL);
-		lblEditState.setText("Edit State: Pencil");
-		redrawDrawPane();
+    	changeEditState(Utils.SHAPE_PENCIL);
+    	lblEditState.setText("Edit State: Pencil");
+		drawPane.redraw();
     }
 
 
@@ -294,92 +288,46 @@ public class GrimPanFXController extends AnchorPane {
 
     }
 
-    @FXML
+	// Mouse Event Handler
     void handleMouseEntered(MouseEvent event) {
     	//model.setMouseInside(true);
     }
 
-    @FXML
     void handleMouseExited(MouseEvent event) {
     	//model.setMouseInside(false);
     }
 
-    @FXML
-    void handleMouseDragged(MouseEvent event) {
-		Point2D p1 = new Point2D(Math.max(0, event.getX()), Math.max(0, event.getY()));
-
-		if (event.getButton()==MouseButton.PRIMARY){
-			model.setPrevMousePosition(model.getCurrMousePosition());
-			model.setCurrMousePosition(p1);
-
-			switch (model.getEditState()){
-			case Utils.SHAPE_LINE:
-				model.curDrawShape = sf.createMousePointedLine();
-				break;
-			case Utils.SHAPE_PENCIL:
-				((Path)model.curDrawShape).getElements().add(new LineTo(p1.getX(), p1.getY()));
-				break;
-			case Utils.EDIT_MOVE:
-				break;
-
-			}
-		}
-		redrawDrawPane();
-    }
-
-    @FXML
     void handleMousePressed(MouseEvent event) {
-		//System.out.format("drawPane w=%s h=%s\n", drawPane.getWidth(), drawPane.getHeight());
-		//System.out.format("drawPane Property w=%s h=%s\n", widthProp.get(), heightProp.get());
-		Point2D p1 = new Point2D(Math.max(0, event.getX()), Math.max(0, event.getY()));
 
 		if (event.getButton()==MouseButton.PRIMARY){
-			model.setStartMousePosition(p1);
-			model.setCurrMousePosition(p1);
-			model.setPrevMousePosition(p1);				
-			switch (model.getEditState()){
-			case Utils.SHAPE_LINE:
-				model.curDrawShape = sf.createMousePointedLine();
-				break;
-			case Utils.SHAPE_PENCIL:
-				model.curDrawShape = sf.createPaintedShape(new Path(new MoveTo(p1.getX(), p1.getY())));
-				break;
-			case Utils.EDIT_MOVE:
-				break;
-			}
-		}
-		redrawDrawPane();
-    }
+			model.sb.performMousePressed(event);
+		}		
+		drawPane.redraw();
 
-    @FXML
+	}    
+
     void handleMouseReleased(MouseEvent event) {
-		Point2D p1 = new Point2D(Math.max(0, event.getX()), Math.max(0, event.getY()));
-		//System.out.println("Mouse Released at "+p1);
 
 		if (event.getButton()==MouseButton.PRIMARY){
-			model.setPrevMousePosition(model.getCurrMousePosition());
-			model.setCurrMousePosition(p1);
-
-			switch (model.getEditState()){
-			case Utils.SHAPE_LINE:
-				model.curDrawShape = sf.createMousePointedLine();
-				if (model.curDrawShape != null){
-					model.shapeList.add(model.curDrawShape);
-					model.curDrawShape = null;
-				}
-				break;
-			case Utils.SHAPE_PENCIL:
-				((Path)model.curDrawShape).getElements().add(new LineTo(p1.getX(), p1.getY()));
-				if (model.curDrawShape != null){
-					model.shapeList.add(model.curDrawShape);
-					model.curDrawShape = null;
-				}
-				break;
-			case Utils.EDIT_MOVE:
-				break;
-
-			}
+			model.sb.performMouseReleased(event);
 		}
-    }
+		drawPane.redraw();
+		
+	}
 
+	void handleMouseDragged(MouseEvent event) {
+
+		if (event.getButton()==MouseButton.PRIMARY){
+			model.sb.performMouseDragged(event);
+		}
+		drawPane.redraw();
+	}
+
+	void changeEditState(int state) {
+		model.setEditState(state);
+		System.out.println("state :"+ state);
+
+	}
+	
+	
 }
