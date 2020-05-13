@@ -5,7 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 
-public class GrimPanZCmdFXMLMain extends Application {
+public class GrimPanZStateFXMLMain extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		primaryStage.setTitle("GrimPan");

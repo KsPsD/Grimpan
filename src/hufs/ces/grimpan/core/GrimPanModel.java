@@ -1,39 +1,35 @@
 package hufs.ces.grimpan.core;
 
-import java.util.ArrayList; 
-import java.util.Stack;
+import java.util.Stack; 
 
+import hufs.ces.grimpan.command.AddCommand;
+import hufs.ces.grimpan.command.Command;
+import hufs.ces.grimpan.command.DelCommand;
+import hufs.ces.grimpan.command.MoveCommand;
+import hufs.ces.grimpan.state.DeleteBuilderState;
+import hufs.ces.grimpan.state.EditState;
+import hufs.ces.grimpan.state.LineBuilderState;
+import hufs.ces.grimpan.state.MoveBuilderState;
+import hufs.ces.grimpan.state.PencilBuilderState;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
-import hufs.ces.grimpan.command.AddCommand;
-import hufs.ces.grimpan.command.Command;
-import hufs.ces.grimpan.command.DelCommand;
-import hufs.ces.grimpan.command.MoveCommand;
-import hufs.ces.grimpan.sb.DeleteShapeBuilder;
-import hufs.ces.grimpan.sb.LineShapeBuilder;
-import hufs.ces.grimpan.sb.MoveShapeBuilder;
-import hufs.ces.grimpan.sb.PencilShapeBuilder;
-import hufs.ces.grimpan.sb.ShapeBuilder;
-
 public class GrimPanModel {
 
 	private volatile static GrimPanModel uniqueModelInstance;
 	
-	private int editState = Utils.SHAPE_PENCIL;
-	
 	private ShapeFactory sf = ShapeFactory.getInstance(this);
-	public final ShapeBuilder[] SHAPE_BUILDERS = {
-			new LineShapeBuilder(this, sf),
-			new PencilShapeBuilder(this, sf),
-			new MoveShapeBuilder(this, sf),
-			new DeleteShapeBuilder(this, sf)
-		};
-	public ShapeBuilder sb = null;
 	
+	public EditState editState = null;
+	public EditState savedAddState = null;
+	public final EditState STATE_LINE = new LineBuilderState(this, sf);
+	public final EditState STATE_PENCIL = new PencilBuilderState(this, sf);
+	public final EditState STATE_MOVE = new MoveBuilderState(this,sf);
+	public final EditState STATE_DELETE = new DeleteBuilderState(this,sf);
+
 	private float shapeStrokeWidth = 10f;
 	private Color shapeStrokeColor = Color.BLACK;
 	private boolean shapeStroke = true;
@@ -47,12 +43,10 @@ public class GrimPanModel {
 	public ObservableList<Shape> shapeList = null;
 	public Shape curDrawShape = null;
 	
-	private int selectedShapeIndex = -1; // 이게 선택된거
+	private int selectedShapeIndex = -1;
 	private Point2D movedPos = null;
 	private Point2D deletedPos= null;
-	public Stack<Command> undoCommandStack = null;  // command 패턴에서 이게 제일 중요
-	
-	
+	public Stack<Command> undoCommandStack = null;
 
 	public static GrimPanModel getInstance() {
 		if (uniqueModelInstance == null) {
@@ -69,19 +63,16 @@ public class GrimPanModel {
 		this.shapeStrokeColor = Color.BLACK;
 		this.shapeFillColor = Color.TRANSPARENT;
 
-		this.setEditState(Utils.SHAPE_PENCIL);          //////
+		this.setEditState(STATE_PENCIL);
 		this.undoCommandStack = new Stack<Command>();
 	}
 
-	public int getEditState() {
+	public EditState getEditState() {
 		return editState;
 	}
 
-	public void setEditState(int editState) {
+	public void setEditState(EditState editState) {
 		this.editState = editState;
-		// Todo -- Change Status Bar Edit Mode
-		if (this.editState!=Utils.EDIT_UNDO)         ///////여기서 상태창 바꿈 pane에 있는값
-			this.sb = SHAPE_BUILDERS[this.getEditState()];  //
 	}
 
 	public float getShapeStrokeWidth() {
@@ -180,7 +171,7 @@ public class GrimPanModel {
 	}
 
 		
-	public void addShapeAction() {/////
+	public void addShapeAction() {
 		Command addCommand = new AddCommand(this, this.curDrawShape);
 		this.undoCommandStack.push(addCommand);// save for undo
 		addCommand.execute();
@@ -200,7 +191,7 @@ public class GrimPanModel {
 		this.undoCommandStack.push(moveCommand);// save for undo
 		moveCommand.execute();
 	}
-	public void undoAction() {////// 이게 다 액션들
+	public void undoAction() {
 		if (this.undoCommandStack.isEmpty())
 			return;
 		
@@ -214,15 +205,11 @@ public class GrimPanModel {
 	public void setMovedPos(Point2D movedPos) {
 		this.movedPos = movedPos;
 	}
-	
-	
 	public Point2D getDeletedPos() {
 		return deletedPos;
 	}
 	public void setDeletedPos(Point2D deletedPos) {
 		this.deletedPos = deletedPos;
 	}
+	
 }
-
-
-

@@ -3,7 +3,7 @@
  * @author cskim -- hufs.ac.kr, Dept of CSE
  * Copy Right -- Free for Educational Purpose
  */
-package hufs.ces.grimpan.sb;
+package hufs.ces.grimpan.state;
 
 import hufs.ces.grimpan.core.GrimPanModel;
 import hufs.ces.grimpan.core.ShapeFactory;
@@ -13,14 +13,21 @@ import javafx.scene.input.MouseEvent;
  * @author cskim
  *
  */
-public class LineShapeBuilder implements ShapeBuilder {
+public class LineBuilderState implements EditState {
 
 	ShapeFactory sf = null;	
 	GrimPanModel model = null;
 	
-	public LineShapeBuilder(GrimPanModel model, ShapeFactory sf){
+	public LineBuilderState(GrimPanModel model, ShapeFactory sf){
 		this.model = model;
 		this.sf = sf;
+	}
+	/* (non-Javadoc)
+	 * @see hufs.cse.grimpan.shape.EditState#getStateType()
+	 */
+	@Override
+	public int getStateType() {
+		return EditState.SHAPE_LINE;
 	}
 	/* (non-Javadoc)
 	 * @see hufs.cse.grimpan.strategy.ShapeBuilder#performMousePressed(java.awt.event.MouseEvent)

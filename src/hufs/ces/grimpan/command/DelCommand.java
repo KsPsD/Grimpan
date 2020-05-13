@@ -30,6 +30,7 @@ public class DelCommand implements Command {
 		delIndex = model.getSelectedShapeIndex();
 		model.shapeList.remove(delIndex);
 		System.out.println("deleted");
+		System.out.println("yeah "+delPos.getX());
 		
 	}
 
@@ -40,7 +41,7 @@ public class DelCommand implements Command {
 		
 		if (deletedShape != null){
 			model.shapeList.add(deletedShape);
-			
+			System.out.println("getx"+delPos.getX());
 			ShapeFactory.translateShape(deletedShape, delPos.getX(), delPos.getY());
 			deletedShape = null;
 		}

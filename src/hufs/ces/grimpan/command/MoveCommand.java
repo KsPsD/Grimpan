@@ -5,7 +5,7 @@
  */
 package hufs.ces.grimpan.command;
 
-import hufs.ces.grimpan.core.GrimPanModel; 
+import hufs.ces.grimpan.core.GrimPanModel;
 import hufs.ces.grimpan.core.ShapeFactory;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
@@ -26,7 +26,9 @@ public class MoveCommand implements Command {
 
 	@Override
 	public void execute() {
+		System.out.println("getX()="+movedPos.getX()+"    getY()="+movedPos.getY());
 		movedShape = model.shapeList.get(model.getSelectedShapeIndex());
+		
 	}
 
 	@Override
@@ -34,6 +36,8 @@ public class MoveCommand implements Command {
 		int selIndex = model.shapeList.indexOf(movedShape);
 		if (selIndex != -1){
 			ShapeFactory.translateShape(movedShape, -movedPos.getX(), -movedPos.getY());
+			System.out.println("halo");
+			System.out.println("getX()="+-movedPos.getX()+"    getY()="+-movedPos.getY());
 		}
 		else {
 			System.out.println("undo moved GrimShape not found!!");

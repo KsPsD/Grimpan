@@ -1,20 +1,24 @@
-package hufs.ces.grimpan.sb;
+package hufs.ces.grimpan.state;
 
-import hufs.ces.grimpan.core.GrimPanModel; 
+import hufs.ces.grimpan.core.GrimPanModel;
 import hufs.ces.grimpan.core.ShapeFactory;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
-public class DeleteShapeBuilder implements ShapeBuilder {
+public class DeleteBuilderState implements EditState {
 
 	ShapeFactory sf = null;	
 	GrimPanModel model = null;
 	
-	public DeleteShapeBuilder(GrimPanModel model, ShapeFactory sf){
+	public DeleteBuilderState(GrimPanModel model, ShapeFactory sf){
 		this.model = model;
 		this.sf = sf;
+	}
+	@Override
+	public int getStateType() {
+		return EditState.EDIT_DELETE;
 	}
 	@Override
 	public void performMousePressed(MouseEvent event) {
@@ -54,6 +58,8 @@ public class DeleteShapeBuilder implements ShapeBuilder {
 			double dx = model.getCurrMousePosition().getX() - model.getStartMousePosition().getX();
 			double dy = model.getCurrMousePosition().getY() - model.getStartMousePosition().getY();
 			
+			System.out.println("dx"+dx);
+			System.out.println("dy"+dy);
 			model.setDeletedPos(new Point2D(dx,dy));
 			
 			model.DeleteShapeAction();

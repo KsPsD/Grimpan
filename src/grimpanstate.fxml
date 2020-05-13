@@ -58,10 +58,10 @@
       <BorderPane fx:id="drawFramePane" AnchorPane.bottomAnchor="26.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0" />
       <HBox layoutX="334.0" layoutY="486.0" prefHeight="25.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <Label fx:id="lblWinSize1" prefWidth="100.0" text="Window Size" />
-            <Label fx:id="lblWinSize2" prefHeight="15.0" prefWidth="40.0" />
-            <Label fx:id="lblEditState" prefHeight="15.0" prefWidth="109.0" text="Edit State: Pencil" />
-            <Label fx:id="lblShapeCount" prefHeight="15.0" prefWidth="101.0" text="Shape Count" />
+            <Label fx:id="lblWinSize1" prefHeight="15.0" prefWidth="113.0" text="Window Size" />
+            <Label fx:id="lblWinSize2" prefHeight="15.0" prefWidth="60.0" />
+            <Label fx:id="lblEditState" prefHeight="15.0" prefWidth="137.0" text="Edit State: Pencil" />
+            <Label fx:id="lblShapeCount" prefHeight="15.0" prefWidth="136.0" text="Shape Count" />
          </children></HBox>
    </children>
 </fx:root>

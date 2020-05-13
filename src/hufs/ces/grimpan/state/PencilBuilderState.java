@@ -1,9 +1,9 @@
 /**
-z * Created on 2015. 3. 8.
+ * Created on 2015. 3. 8.
  * @author cskim -- hufs.ac.kr, Dept of CSE
  * Copy Right -- Free for Educational Purpose
  */
-package hufs.ces.grimpan.sb;
+package hufs.ces.grimpan.state;
 
 import hufs.ces.grimpan.core.GrimPanModel;
 import hufs.ces.grimpan.core.ShapeFactory;
@@ -16,14 +16,18 @@ import javafx.scene.shape.Path;
  * @author cskim
  *
  */
-public class PencilShapeBuilder implements ShapeBuilder {
+public class PencilBuilderState implements EditState {
 
 	ShapeFactory sf = null;	
 	GrimPanModel model = null;
 	
-	public PencilShapeBuilder(GrimPanModel model, ShapeFactory sf){
+	public PencilBuilderState(GrimPanModel model, ShapeFactory sf){
 		this.model = model;
 		this.sf = sf;
+	}
+	@Override
+	public int getStateType() {
+		return EditState.SHAPE_PENCIL;
 	}
 	/* (non-Javadoc)
 	 * @see hufs.cse.grimpan.strategy.ShapeBuilder#performMousePressed(java.awt.event.MouseEvent)

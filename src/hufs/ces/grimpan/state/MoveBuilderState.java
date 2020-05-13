@@ -3,9 +3,9 @@
  * @author cskim -- hufs.ac.kr, Dept of CSE
  * Copy Right -- Free for Educational Purpose
  */
-package hufs.ces.grimpan.sb;
+package hufs.ces.grimpan.state;
 
-import hufs.ces.grimpan.core.GrimPanModel; 
+import hufs.ces.grimpan.core.GrimPanModel;
 import hufs.ces.grimpan.core.ShapeFactory;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
@@ -15,14 +15,18 @@ import javafx.scene.shape.Shape;
  * @author cskim
  *
  */
-public class MoveShapeBuilder implements ShapeBuilder {
+public class MoveBuilderState implements EditState {
 
 	ShapeFactory sf = null;	
 	GrimPanModel model = null;
-	
-	public MoveShapeBuilder(GrimPanModel model, ShapeFactory sf){
+
+	public MoveBuilderState(GrimPanModel model, ShapeFactory sf){
 		this.model = model;
 		this.sf = sf;
+	}
+	@Override
+	public int getStateType() {
+		return EditState.EDIT_MOVE;
 	}
 	/* (non-Javadoc)
 	 * @see hufs.cse.grimpan.strategy.ShapeBuilder#performMousePressed(java.awt.event.MouseEvent)
@@ -47,7 +51,7 @@ public class MoveShapeBuilder implements ShapeBuilder {
 
 		if (model.getSelectedShapeIndex()!=-1) {
 			endShapeMove();
-			
+
 			double dx = model.getCurrMousePosition().getX() - model.getStartMousePosition().getX();
 			double dy = model.getCurrMousePosition().getY() - model.getStartMousePosition().getY();
 			model.setMovedPos(new Point2D(dx, dy));

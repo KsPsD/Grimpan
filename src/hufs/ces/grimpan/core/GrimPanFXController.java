@@ -1,28 +1,20 @@
 package hufs.ces.grimpan.core;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
-import javax.swing.JColorChooser;
-
+import hufs.ces.grimpan.state.EditState;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableDoubleValue;
-import javafx.beans.value.ObservableIntegerValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
@@ -33,12 +25,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 
@@ -49,8 +36,8 @@ public class GrimPanFXController extends AnchorPane {
 	public Stage parentStage;
 	private GrimPanModel model;
 	
-	IntegerProperty widthProp = new SimpleIntegerProperty();
-	IntegerProperty heightProp = new SimpleIntegerProperty();
+	DoubleProperty widthProp = new SimpleDoubleProperty();
+	DoubleProperty heightProp = new SimpleDoubleProperty();
 	
 	ColorPicker fcolorPicker = new ColorPicker(Color.WHITE);
 	ColorPicker scolorPicker = new ColorPicker(Color.BLACK);
@@ -59,7 +46,7 @@ public class GrimPanFXController extends AnchorPane {
 
 		model = GrimPanModel.getInstance();
 
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/grimpancmd.fxml"));
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/grimpanstate.fxml"));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 
@@ -96,13 +83,13 @@ public class GrimPanFXController extends AnchorPane {
 
 		widthProp.bind(drawPane.widthProperty());
 		widthProp.addListener((obs, oldVal, newVal) -> {
-			int val = ((ObservableIntegerValue)obs).get();
+			double val = ((ObservableDoubleValue)obs).get();
 			System.out.format("drawPane w=%s newVal=%s \n", val, newVal);
 			lblWinSize1.setText("WindowSize:"+val);
 		});
 		heightProp.bind(drawPane.heightProperty());
 		heightProp.addListener((obs, oldVal, newVal) -> {
-			int val = ((ObservableIntegerValue)obs).get();
+			double val = ((ObservableDoubleValue)obs).get();
 			System.out.format("drawPane h=%s newVal=%s \n", val, newVal);
 			lblWinSize2.setText("x"+val);
 		});
@@ -116,7 +103,6 @@ public class GrimPanFXController extends AnchorPane {
 	            if (c.wasRemoved()) {
 	            	System.out.println("Shape Count ="+model.shapeList.size());
 	            	lblShapeCount.setText("Shape Count : "+model.shapeList.size());
-
 	            }
 	        }
 		});
@@ -178,7 +164,6 @@ public class GrimPanFXController extends AnchorPane {
 
     @FXML
     private Label lblWinSize2;
-
     @FXML
     private Label lblEditState;
 
@@ -217,9 +202,9 @@ public class GrimPanFXController extends AnchorPane {
 
     @FXML
     void handleMenuDelete(ActionEvent event) {
-    	changeEditState(Utils.EDIT_DELETE);
+    	changeEditState(model.STATE_DELETE);
     	lblEditState.setText("Edit State: delete");
-    	drawPane.redraw();
+		drawPane.redraw();
     }
 
     @FXML
@@ -233,22 +218,20 @@ public class GrimPanFXController extends AnchorPane {
 
     @FXML
     void handleMenuLine(ActionEvent event) {
-		changeEditState(Utils.SHAPE_LINE);
+    	changeEditState(model.STATE_LINE);
     	lblEditState.setText("Edit State: Line");
-		drawPane.redraw();
+		drawPane.redraw();		
     }
 
     @FXML
 	void handleMenuUndo(ActionEvent event) {
-		changeEditState(Utils.EDIT_UNDO);
-		
 		model.undoAction();
 		drawPane.redraw();
 	}
 
     @FXML
     void handleMenuMove(ActionEvent event) {
-		changeEditState(Utils.EDIT_MOVE);
+    	changeEditState(model.STATE_MOVE);
 		if (model.curDrawShape != null){
 			model.shapeList.add(model.curDrawShape);
 			model.curDrawShape = null;
@@ -264,7 +247,7 @@ public class GrimPanFXController extends AnchorPane {
 
     @FXML
     void handleMenuPencil(ActionEvent event) {
-    	changeEditState(Utils.SHAPE_PENCIL);
+    	changeEditState(model.STATE_PENCIL);
     	lblEditState.setText("Edit State: Pencil");
 		drawPane.redraw();
     }
@@ -300,7 +283,7 @@ public class GrimPanFXController extends AnchorPane {
     void handleMousePressed(MouseEvent event) {
 
 		if (event.getButton()==MouseButton.PRIMARY){
-			model.sb.performMousePressed(event);
+			model.editState.performMousePressed(event);
 		}		
 		drawPane.redraw();
 
@@ -309,7 +292,7 @@ public class GrimPanFXController extends AnchorPane {
     void handleMouseReleased(MouseEvent event) {
 
 		if (event.getButton()==MouseButton.PRIMARY){
-			model.sb.performMouseReleased(event);
+			model.editState.performMouseReleased(event);
 		}
 		drawPane.redraw();
 		
@@ -318,16 +301,15 @@ public class GrimPanFXController extends AnchorPane {
 	void handleMouseDragged(MouseEvent event) {
 
 		if (event.getButton()==MouseButton.PRIMARY){
-			model.sb.performMouseDragged(event);
+			model.editState.performMouseDragged(event);
 		}
 		drawPane.redraw();
 	}
-
-	void changeEditState(int state) {
-		model.setEditState(state);
-		System.out.println("state :"+ state);
-
-	}
 	
+	void changeEditState(EditState state) {
+		// Todo lblEditState Setting
+		System.out.format("editState=%s\n", state);
+		model.setEditState(state);
+	}
 	
 }
