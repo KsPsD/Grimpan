@@ -20,17 +20,16 @@ public class DelCommand implements Command {
 	Shape deletedShape = null;
 	Point2D delPos=null;
 	int delIndex= 0;
-	public DelCommand(GrimPanModel model, Point2D delPos){
+	public DelCommand(GrimPanModel model){
 		this.model = model;
-		this.delPos = delPos;
+		
 	}
 	@Override
 	public void execute() {
 		deletedShape = model.shapeList.get(model.getSelectedShapeIndex());
 		delIndex = model.getSelectedShapeIndex();
 		model.shapeList.remove(delIndex);
-		System.out.println("deleted");
-		System.out.println("yeah "+delPos.getX());
+		
 		
 	}
 
@@ -41,8 +40,7 @@ public class DelCommand implements Command {
 		
 		if (deletedShape != null){
 			model.shapeList.add(deletedShape);
-			System.out.println("getx"+delPos.getX());
-			ShapeFactory.translateShape(deletedShape, delPos.getX(), delPos.getY());
+			ShapeFactory.translateShape(deletedShape, 0, 0);
 			deletedShape = null;
 		}
 		

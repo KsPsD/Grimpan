@@ -54,13 +54,13 @@ public class DeleteBuilderState implements EditState {
 				}
 			
 			}
-			
-			double dx = model.getCurrMousePosition().getX() - model.getStartMousePosition().getX();
-			double dy = model.getCurrMousePosition().getY() - model.getStartMousePosition().getY();
-			
-			System.out.println("dx"+dx);
-			System.out.println("dy"+dy);
-			model.setDeletedPos(new Point2D(dx,dy));
+//			
+//			double dx = model.getCurrMousePosition().getX() - model.getStartMousePosition().getX();
+//			double dy = model.getCurrMousePosition().getY() - model.getStartMousePosition().getY();
+//			
+//			System.out.println("dx"+dx);
+//			System.out.println("dy"+dy);
+//			model.setDeletedPos(new Point2D(dx,dy));
 			
 			model.DeleteShapeAction();
 		}

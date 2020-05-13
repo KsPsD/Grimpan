@@ -179,7 +179,7 @@ public class GrimPanModel {
 	}
 	
 	public void DeleteShapeAction() {
-		Command DelCommand = new DelCommand(this, this.getDeletedPos());
+		Command DelCommand = new DelCommand(this);
 		this.undoCommandStack.push(DelCommand);// save for undo
 		DelCommand.execute();
 
@@ -205,11 +205,6 @@ public class GrimPanModel {
 	public void setMovedPos(Point2D movedPos) {
 		this.movedPos = movedPos;
 	}
-	public Point2D getDeletedPos() {
-		return deletedPos;
-	}
-	public void setDeletedPos(Point2D deletedPos) {
-		this.deletedPos = deletedPos;
-	}
+	
 	
 }
